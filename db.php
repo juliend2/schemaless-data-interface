@@ -21,3 +21,26 @@ function insert_record($db, $opts) {
   ]);
   return $db->lastInsertId();
 }
+
+class record {
+    public $id;
+    public $namespace;
+    public $data;
+    public $created_at;
+
+    function __construct() {
+        $this->id = intval($this->id);
+        $this->data = json_decode($this->data);
+    }
+}
+
+function get_all_by_namespace($db, $namespace) {
+    $stmt = $db->prepare("
+    SELECT * 
+    FROM records 
+    WHERE namespace = :namespace
+    ");
+    $stmt->execute(['namespace' => $namespace]); 
+    $rows = $stmt->fetchAll(PDO::FETCH_CLASS, "record");
+    return $rows;
+}
